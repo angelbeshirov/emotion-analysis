@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>emotion-analysis1</artifactId>
+    <artifactId>emotion-analysis</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>

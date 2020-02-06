@@ -1,6 +1,5 @@
 package com.fmi.ai;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,6 +7,7 @@ import java.util.Set;
  * @author angel.beshirov
  */
 public class ReferenceWords {
+    private static final int MAX_SIZE = 90;
     private final Set<String> joyWords;
     private final Set<String> sadnessWords;
 
@@ -39,11 +39,13 @@ public class ReferenceWords {
         this.fearWords = new HashSet<>();
         this.calmWords = new HashSet<>();
         this.angryWords = new HashSet<>();
+
+        initialReferenceWords();
     }
 
     public void addJoyWord(String... words) {
         for (String word : words) {
-            if (joyWords.size() <= 90) {
+            if (joyWords.size() <= MAX_SIZE) {
                 joyWords.add(word);
             }
         }
@@ -51,7 +53,7 @@ public class ReferenceWords {
 
     public void addSadWord(String... words) {
         for (String word : words) {
-            if (sadnessWords.size() <= 90) {
+            if (sadnessWords.size() <= MAX_SIZE) {
                 sadnessWords.add(word);
             }
         }
@@ -59,7 +61,7 @@ public class ReferenceWords {
 
     public void addSurprisedWord(String... words) {
         for (String word : words) {
-            if (surprisedWords.size() <= 90) {
+            if (surprisedWords.size() <= MAX_SIZE) {
                 surprisedWords.add(word);
             }
         }
@@ -67,7 +69,7 @@ public class ReferenceWords {
 
     public void addAnticipationWord(String... words) {
         for (String word : words) {
-            if (anticipationWords.size() <= 90) {
+            if (anticipationWords.size() <= MAX_SIZE) {
                 anticipationWords.add(word);
             }
         }
@@ -75,7 +77,7 @@ public class ReferenceWords {
 
     public void addTrustWord(String... words) {
         for (String word : words) {
-            if (trustWords.size() <= 90) {
+            if (trustWords.size() <= MAX_SIZE) {
                 trustWords.add(word);
             }
         }
@@ -83,7 +85,7 @@ public class ReferenceWords {
 
     public void addDoubtWord(String... words) {
         for (String word : words) {
-            if (doubtWords.size() <= 90) {
+            if (doubtWords.size() <= MAX_SIZE) {
                 doubtWords.add(word);
             }
         }
@@ -91,7 +93,7 @@ public class ReferenceWords {
 
     public void addLoveWords(String... words) {
         for (String word : words) {
-            if (loveWords.size() <= 90) {
+            if (loveWords.size() <= MAX_SIZE) {
                 loveWords.add(word);
             }
         }
@@ -99,7 +101,7 @@ public class ReferenceWords {
 
     public void addHateWord(String... words) {
         for (String word : words) {
-            if (hateWords.size() <= 90) {
+            if (hateWords.size() <= MAX_SIZE) {
                 hateWords.add(word);
             }
         }
@@ -107,7 +109,7 @@ public class ReferenceWords {
 
     public void addConfidentWord(String... words) {
         for (String word : words) {
-            if (confidentWords.size() <= 90) {
+            if (confidentWords.size() <= MAX_SIZE) {
                 confidentWords.add(word);
             }
         }
@@ -115,7 +117,7 @@ public class ReferenceWords {
 
     public void addFearWord(String... words) {
         for (String word : words) {
-            if (fearWords.size() <= 90) {
+            if (fearWords.size() <= MAX_SIZE) {
                 fearWords.add(word);
             }
         }
@@ -123,7 +125,7 @@ public class ReferenceWords {
 
     public void addCalmWord(String... words) {
         for (String word : words) {
-            if (calmWords.size() <= 90) {
+            if (calmWords.size() <= MAX_SIZE) {
                 calmWords.add(word);
             }
         }
@@ -131,7 +133,7 @@ public class ReferenceWords {
 
     public void addAngryWord(String... words) {
         for (String word : words) {
-            if (angryWords.size() <= 90) {
+            if (angryWords.size() <= MAX_SIZE) {
                 angryWords.add(word);
             }
         }
@@ -201,5 +203,33 @@ public class ReferenceWords {
                 "calmWords=" + calmWords.size() + '\n' +
                 "angryWords=" + angryWords.size() + '\n' +
                 '}';
+    }
+
+    private void initialReferenceWords() {
+        String[] initialJoyWords = {"joy", "delight", "pleasure", "exultation", "glad", "elation", "happy", "thrill", "exultation", "euphoria"};
+        String[] initialSadWords = {"sad", "unhappy", "sorrow", "regret", "depressed", "miserable", "dismal", "gloomy", "regret", "downcast"};
+        String[] initialSurprisedWords = {"surprised", "shocked", "astonish", "amaze", "speechless", "astounding", "stun", "breathtaking", "staggered", "wonder"};
+        String[] initialAnticipationWords = {"anticipate", "await", "expect", "hope", "foresee", "predict", "count on", "look for", "await", "prepare for"};
+        String[] initialTrustWords = {"trust", "faith", "certainty", "certitude", "assure", "sureness"};
+        String[] initialDoubtWords = {"doubt", "mistrust", "disbelief", "distrust", "uncertainty", "incredulity", "unbelief", "doubtful"};
+        String[] initialLoveWords = {"affection", "attachment", " devotedness", "devotion", "fondness", "passion", "crush", "intimacy", "love", "attachment"};
+        String[] initialHateWords = {"hate", "hatred", "loathe", "detest", "dislike", "despise", "disrelish", "abominate", "despise", "animosity"};
+        String[] initialConfidentWords = {"confident", "assured", " bold", "convinced", "courageous", "fearless", "hopeful", "positive"};
+        String[] initialFearWords = {"fear", "angst", "anxiety", "despair", "dismay", "worry", "horror", "panic", "scare", "unease"};
+        String[] initialCalmWords = {"calm", "calmness", " patience", "peace", "eased", "quiet", "restraint", "silence", "tranquility", "stillness"};
+        String[] initialAngryWords = {"angry", "annoyed", "bitter", "enraged", "exasperated", "furious", "heated", "irritated", "outraged", "resentful"};
+
+        addJoyWord(initialJoyWords);
+        addSadWord(initialSadWords);
+        addSurprisedWord(initialSurprisedWords);
+        addAnticipationWord(initialAnticipationWords);
+        addTrustWord(initialTrustWords);
+        addDoubtWord(initialDoubtWords);
+        addLoveWords(initialLoveWords);
+        addHateWord(initialHateWords);
+        addConfidentWord(initialConfidentWords);
+        addFearWord(initialFearWords);
+        addCalmWord(initialCalmWords);
+        addAngryWord(initialAngryWords);
     }
 }

@@ -10,7 +10,8 @@ public class Runner {
         try (Scanner sc = new Scanner(System.in)) {
             System.out.println("Please enter a String:");
             String input = sc.nextLine();
-            analyzer.analyze(input);
+            EmotionResult emotionResult = analyzer.analyze(input);
+            System.out.println(emotionResult.toString());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

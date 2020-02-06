@@ -1,7 +1,6 @@
 package com.fmi.ai;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author angel.beshirov
@@ -11,14 +10,15 @@ public class BingStatisticalAnalyzer implements Analyzer {
     private final SpellChecker spellChecker;
     private final ReferenceWords referenceWords;
     private final RestCaller restCaller;
+    private static final Random RANDOM = new Random();
+
+    private int totalQueries = 0;
 
     public BingStatisticalAnalyzer() {
         this.spellChecker = new SpellChecker();
         this.referenceWords = new ReferenceWords();
         this.restCaller = new RestCaller();
-        initReferenceWords();
         enlargeReferenceWords();
-
 
         System.out.println("Testing spell checker:");
         System.out.println(spellChecker.correct("saaad"));
@@ -155,105 +155,99 @@ public class BingStatisticalAnalyzer implements Analyzer {
         sentence = StopWordsRemover.proceess(sentence);
 
         EmotionResult emotionResult = new EmotionResult();
-        try {
-            String[] words = sentence.split("\\s+");
+        String[] words = sentence.split("\\s+");
 
-            for (String word : words) {
-                word = spellChecker.correct(word);
+        for (String word : words) {
+            word = spellChecker.correct(word);
+            double joyScoreResult, surprisedScoreResult, trustScore, loveScore, confidentScore, calmScore;
 
-                System.out.println("Going to make a call for" + word);
-                //word = spellChecker.correct(word);
-                //System.out.println("Corrected:" + word);
+            System.out.println("Going to make a call for " + word);
+            double onlyWord = BingAPICaller.search(word);
 
-                // calculate for joy-sad score for each word
-                setUpJoyScore(emotionResult, word);
-                setUpSurprisedScore(emotionResult, word);
-                // TODO same for the other 4, just gotta fix the API to return responses faster
-            }
-        } catch (Exception e) {
-            System.out.println("GOTTA SLEEP CUZ THE API RETURNS 429 2 many requests");
+            System.out.println("Setting up joy score...");
+            // ~40 requests
+            joyScoreResult = executeQueries(word, referenceWords.getJoyWords(), referenceWords.getSadnessWords(), onlyWord);
+            System.out.println("Joy score result:" + joyScoreResult);
+            emotionResult.addJoyScore(joyScoreResult);
+
+            System.out.println("Setting up surprised score...");
+            surprisedScoreResult = executeQueries(word, referenceWords.getSurprisedWords(), referenceWords.getAnticipationWords(), onlyWord);
+            System.out.println("Surprised score result:" + surprisedScoreResult);
+            emotionResult.addSurprisedScore(surprisedScoreResult);
+
+            System.out.println("Setting up trust score...");
+            trustScore = executeQueries(word, referenceWords.getTrustWords(), referenceWords.getDoubtWords(), onlyWord);
+            System.out.println("Trust score result:" + trustScore);
+            emotionResult.addTrustScore(trustScore);
+
+            System.out.println("Setting up love score...");
+            loveScore = executeQueries(word, referenceWords.getLoveWords(), referenceWords.getHateWords(), onlyWord);
+            System.out.println("Love score result:" + loveScore);
+            emotionResult.addLoveScore(loveScore);
+
+            System.out.println("Setting up confident score...");
+            confidentScore = executeQueries(word, referenceWords.getConfidentWords(), referenceWords.getFearWords(), onlyWord);
+            System.out.println("Confident score result:" + confidentScore);
+            emotionResult.addConfidenceScore(confidentScore);
+
+            System.out.println("Setting up calm score...");
+            calmScore = executeQueries(word, referenceWords.getCalmWords(), referenceWords.getAngryWords(), onlyWord);
+            System.out.println("Calm score result:" + calmScore);
+            emotionResult.addCalmScore(calmScore);
+
+            System.out.println("Total requests sent:" + totalQueries);
         }
 
         return emotionResult;
     }
 
-    private void setUpJoyScore(EmotionResult emotionResult, String word) throws InterruptedException {
-        double joyScore = 0.0d;
-        double sadScore = 0.0d;
-        double onlyWord = BingAPICaller.search(word);
-        System.out.println("Joy words:" + referenceWords.getJoyWords().size());
-        System.out.println("Starting to execute requests for joy words");
-        for (String positiveReferenceWord : referenceWords.getJoyWords()) {
-            double wordAndP = BingAPICaller.search(word, positiveReferenceWord);
-            double onlyP = BingAPICaller.search(positiveReferenceWord);
-            joyScore += Math.log(wordAndP / (onlyP * onlyWord));
-            Thread.sleep(1000);
+    private double executeQueries(String word, Set<String> positiveClass, Set<String> negativeClass, double onlyWord) {
+        double positiveScore = 0.0d;
+        double negativeScore = 0.0d;
+
+        List<List<String>> positiveXiWords = distributeWordsRandomlyIntoLists(new ArrayList<>(positiveClass), 9);
+        List<List<String>> negativeXiWords = distributeWordsRandomlyIntoLists(new ArrayList<>(negativeClass), 9);
+
+        // should make 2 * 10 requests
+        for (List<String> list : positiveXiWords) {
+            String[] arr = list.toArray(new String[0]);
+            double wordAndPxi = BingAPICaller.search(word, arr);
+            double onlyPxi = BingAPICaller.search(arr);
+            totalQueries += 2;
+            positiveScore += Math.log(wordAndPxi / (onlyPxi * onlyWord));
         }
 
-        System.out.println("Starting to execute requests for sad words");
-        for (String negativeReferenceWord : referenceWords.getSadnessWords()) {
-            double wordAndN = BingAPICaller.search(word, negativeReferenceWord);
-            double onlyP = BingAPICaller.search(negativeReferenceWord);
-            sadScore += Math.log(wordAndN / (onlyP * onlyWord));
-            Thread.sleep(1000); // 0.5 sec
+        // 2 * 10 requests
+        for (List<String> list : negativeXiWords) {
+            String[] arr = list.toArray(new String[0]);
+            double wordAndPxi = BingAPICaller.search(word, arr);
+            double onlyPxi = BingAPICaller.search(arr);
+            totalQueries += 2;
+            negativeScore += Math.log(wordAndPxi / (onlyPxi * onlyWord));
         }
 
-        System.out.println("Score for joy-sad axis is:" + (joyScore - sadScore));
-
-        emotionResult.addJoyScore(joyScore - sadScore);
+        return positiveScore - negativeScore;
     }
 
-    private void setUpSurprisedScore(EmotionResult emotionResult, String word) throws InterruptedException {
-        double surprisedScore = 0.0d;
-        double anticipatedScore = 0.0d;
-        double onlyWord = BingAPICaller.search(word);
-        System.out.println("Surprised words:" + referenceWords.getSurprisedWords().size());
-        System.out.println("Starting to execute requests for surprised words");
-        for (String positiveReferenceWord : referenceWords.getSurprisedWords()) {
-            double wordAndP = BingAPICaller.search(word, positiveReferenceWord);
-            double onlyP = BingAPICaller.search(positiveReferenceWord);
-            surprisedScore += Math.log(wordAndP / (onlyP * onlyWord));
-            Thread.sleep(1000); // API returns 403/429
+    private List<List<String>> distributeWordsRandomlyIntoLists(List<String> words, int size) {
+        Set<Integer> usedIndices = new HashSet<>();
+        List<List<String>> result = new ArrayList<>();
+        List<String> temp = new ArrayList<>();
+        // somewhat uniformly distributed
+        while (usedIndices.size() != words.size()) {
+            int index = RANDOM.nextInt(words.size());
+
+            if (!usedIndices.contains(index)) {
+                usedIndices.add(index);
+
+                temp.add(words.get(index));
+                if (temp.size() >= size) {
+                    result.add(temp);
+                    temp = new ArrayList<>();
+                }
+            }
         }
 
-        System.out.println("Starting to execute requests for anticipated words");
-        for (String negativeReferenceWord : referenceWords.getAnticipationWords()) {
-            double wordAndN = BingAPICaller.search(word, negativeReferenceWord);
-            double onlyP = BingAPICaller.search(negativeReferenceWord);
-            anticipatedScore += Math.log(wordAndN / (onlyP * onlyWord));
-            Thread.sleep(1000); // 0.5 sec
-        }
-
-        System.out.println("Score for suprise-anticipated axis is:" + (surprisedScore - anticipatedScore));
-
-        emotionResult.addSurprisedScore(surprisedScore - anticipatedScore);
-    }
-
-    private void initReferenceWords() {
-        String[] initialJoyWords = {"joy", "delight", "pleasure", "exultation", "glad", "elation", "happy", "thrill", "exultation", "euphoria"};
-        String[] initialSadWords = {"sad", "unhappy", "sorrow", "regret", "depressed", "miserable", "dismal", "gloomy", "regret", "downcast"};
-        String[] initialSurprisedWords = {"surprised", "shocked", "astonish", "amaze", "speechless", "astounding", "stun", "breathtaking", "staggered", "wonder"};
-        String[] initialAnticipationWords = {"anticipate", "await", "expect", "hope", "foresee", "predict", "count on", "look for", "await", "prepare for"};
-        String[] initialTrustWords = {"trust", "faith", "certainty", "certitude", "assure", "sureness"};
-        String[] initialDoubtWords = {"doubt", "mistrust", "disbelief", "distrust", "uncertainty", "incredulity", "unbelief"};
-        String[] initialLoveWords = {"affection", "attachment", " devotedness", "devotion", "fondness", "passion", "crush", "intimacy", "love", "attachment"};
-        String[] initialHateWords = {"hate", "hatred", "loathe", "detest", "dislike", "despise", "disrelish", "abominate", "despise", "animosity"};
-        String[] initialConfidentWords = {"confident", "assured", " bold", "convinced", "courageous", "fearless", "hopeful", "positive"};
-        String[] initialFearWords = {"fear", "angst", "anxiety", "despair", "dismay", "worry", "horror", "panic", "scare", "unease"};
-        String[] initialCalmWords = {"calm", "calmness", " patience", "peace", "eased", "quiet", "restraint", "silence", "tranquility", "stillness"};
-        String[] initialAngryWords = {"angry", "annoyed", "bitter", "enraged", "exasperated", "furious", "heated", "irritated", "outraged", "resentful"};
-
-        referenceWords.addJoyWord(initialJoyWords);
-        referenceWords.addSadWord(initialSadWords);
-        referenceWords.addSurprisedWord(initialSurprisedWords);
-        referenceWords.addAnticipationWord(initialAnticipationWords);
-        referenceWords.addTrustWord(initialTrustWords);
-        referenceWords.addDoubtWord(initialDoubtWords);
-        referenceWords.addLoveWords(initialLoveWords);
-        referenceWords.addHateWord(initialHateWords);
-        referenceWords.addConfidentWord(initialConfidentWords);
-        referenceWords.addFearWord(initialFearWords);
-        referenceWords.addCalmWord(initialCalmWords);
-        referenceWords.addAngryWord(initialAngryWords);
+        return result;
     }
 }

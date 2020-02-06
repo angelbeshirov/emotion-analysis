@@ -7,7 +7,7 @@ import java.util.Set;
  * @author angel.beshirov
  */
 public class ReferenceWords {
-    private static final int MAX_SIZE = 90;
+    private static final int MAX_SIZE = 10;
     private final Set<String> joyWords;
     private final Set<String> sadnessWords;
 

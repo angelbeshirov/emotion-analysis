@@ -1,9 +1,11 @@
 package com.fmi.ai;
 
+import com.fmi.ai.analyze.Result;
+
 /**
  * @author angel.beshirov
  */
-public class EmotionResult {
+public class EmotionResult implements Result {
     /**
      * Emotional axis joy-sadness
      */

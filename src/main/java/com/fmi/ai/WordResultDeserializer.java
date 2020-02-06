@@ -32,17 +32,22 @@ public class WordResultDeserializer extends StdDeserializer<WordResult> {
             throws IOException, JsonProcessingException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 
-        Helper helper = objectMapper.readValue(node.get(0).get("meta").toString(), Helper.class);
-        return new WordResult(
-                helper.getStems(),
-                helper.getSynonyms()
-                        .stream()
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList()),
-                helper.getAntonyms()
-                        .stream()
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList()));
+        try {
+            Helper helper = objectMapper.readValue(node.get(0).get("meta").toString(), Helper.class);
+            return new WordResult(
+                    helper.getStems(),
+                    helper.getSynonyms()
+                            .stream()
+                            .flatMap(List::stream)
+                            .collect(Collectors.toList()),
+                    helper.getAntonyms()
+                            .stream()
+                            .flatMap(List::stream)
+                            .collect(Collectors.toList()));
+        } catch (RuntimeException e) {
+            return new WordResult();
+        }
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

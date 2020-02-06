@@ -2,6 +2,7 @@ package com.fmi.ai;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonDeserialize(using = WordResultDeserializer.class)
@@ -12,6 +13,9 @@ public class WordResult {
     private List<String> antonyms;
 
     public WordResult() {
+        this.stems = new ArrayList<>();
+        this.synonyms = new ArrayList<>();
+        this.antonyms = new ArrayList<>();
     }
 
     public WordResult(List<String> stems, List<String> synonyms, List<String> antonyms) {

@@ -1,5 +1,7 @@
 package com.fmi.ai;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,11 +17,15 @@ public class RestCaller {
         this.objectMapper = new ObjectMapper();
     }
 
-    public WordResult call(String word) throws IOException {
+    public WordResult call(String word) {
         RestTemplate restTemplate = new RestTemplate();
         String url = MessageFormat.format(URL_DICTIONARY, word);
         String result = restTemplate.getForObject(url, String.class);
 
-        return objectMapper.readValue(result, WordResult.class);
+        try {
+            return objectMapper.readValue(result, WordResult.class);
+        } catch (IOException e) {
+            return new WordResult();
+        }
     }
 }

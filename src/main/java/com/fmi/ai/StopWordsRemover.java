@@ -17,12 +17,17 @@ public class StopWordsRemover {
      * @return a string formed by the input string be removing the stop words
      * @throws Exception
      */
-    public static String proceess(String str) {
+    public static String process(String str) {
         String delimiters = "[\\s-\\\\t,;.?!:@\\\\[\\\\](){}_*/]+";
         List<String> words = Arrays.asList(str.split(delimiters));
         List<String> stopWords = StopWordsRemover.readStopWords();
         return String.join(" ",
                 words.stream().filter(w -> search(w, stopWords) == -1).collect(Collectors.toList()));
+    }
+
+    public static List<String> process(List<String> words) {
+        List<String> stopWords = StopWordsRemover.readStopWords();
+        return words.stream().filter(w -> search(w, stopWords) == -1).collect(Collectors.toList());
     }
 
     /**

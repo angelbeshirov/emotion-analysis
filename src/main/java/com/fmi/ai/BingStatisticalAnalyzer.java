@@ -151,11 +151,11 @@ public class BingStatisticalAnalyzer implements Analyzer {
         System.out.println("Size after enlarging:\n" + referenceWords.toString());
     }
 
-    public EmotionResult analyze(String sentence) {
-        sentence = StopWordsRemover.proceess(sentence);
+    public EmotionResult analyze(String sentence) throws Exception{
 
         EmotionResult emotionResult = new EmotionResult();
-        String[] words = sentence.split("\\s+");
+//        String[] words = sentence.split("\\s+");
+        List<String> words = SyntaxAnalysisAPICaller.process(sentence);
 
         for (String word : words) {
             word = spellChecker.correct(word);

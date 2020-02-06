@@ -96,6 +96,7 @@ public class BingAPICaller {
             connection.setRequestProperty("Ocp-Apim-Subscription-Key", SUBSCRIPTION_KEY);
             InputStream stream = connection.getInputStream();
             String response = new Scanner(stream).useDelimiter("\\A").next();
+            System.out.println(response);
             ObjectNode responseNode = new ObjectMapper().readValue(response, ObjectNode.class);
             return Double.valueOf(responseNode.get("webPages").get("totalEstimatedMatches").toString());
         } catch (IOException e) {

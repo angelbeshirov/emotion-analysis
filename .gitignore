@@ -1,3 +1,7 @@
 *.iml
 target/
 .idea/
+bayes/dist/
+bayes/__pycache__/
+bayes/build/
+bayes/main.spec

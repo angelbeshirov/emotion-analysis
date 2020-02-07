@@ -1,6 +1,7 @@
 package com.fmi.ai.lexicon;
 
-import com.fmi.ai.*;
+import com.fmi.ai.SpellChecker;
+import com.fmi.ai.StopWordsRemover;
 import com.fmi.ai.analyze.Analyzer;
 
 /**
@@ -21,23 +22,29 @@ public class LexiconAnalyzer implements Analyzer {
     @Override
     public LexiconResult analyze(String sentence) {
         LexiconResult result = new LexiconResult();
-//        sentence = StopWordsRemover.proceess(sentence);
+
+        try {
+            sentence = StopWordsRemover.process(sentence);
+//            List<String> words = SyntaxAnalysisAPICaller.process(sentence);
 
         String[] words = sentence.split("\\s+");
 
-        for (String word : words) {
-            word = spellChecker.correct(word);
+            for (String word : words) {
+                word = spellChecker.correct(word);
 
-            LexiconEntry entry = lexicon.get(word);
+                LexiconEntry entry = lexicon.get(word);
 
-            if (entry != null) {
-                result.addToAfraid(entry.getAfraid());
-                result.addToAmused(entry.getAmused());
-                result.addToAngry(entry.getAngry());
-                result.addToAnnoyed(entry.getAnnoyed());
-                result.addToHappy(entry.getHappy());
-                result.addToInspired(entry.getInspired());
+                if (entry != null) {
+                    result.addToAfraid(entry.getAfraid());
+                    result.addToAmused(entry.getAmused());
+                    result.addToAngry(entry.getAngry());
+                    result.addToAnnoyed(entry.getAnnoyed());
+                    result.addToHappy(entry.getHappy());
+                    result.addToInspired(entry.getInspired());
+                }
             }
+        } catch (Exception e) {
+            System.out.println("Error from syntax analyzer!" + e.getMessage());
         }
 
         return result;

@@ -10,6 +10,7 @@ import java.util.*;
  */
 public class GramaticalProximityAnalyzer implements Analyzer {
 
+    private double ALL_DOCS = 10_000_000_000_000_000_000d;
     private final SpellChecker spellChecker;
     private final ReferenceWords referenceWords;
     private final RestCaller restCaller;
@@ -35,6 +36,7 @@ public class GramaticalProximityAnalyzer implements Analyzer {
         System.out.println("Enlarging joy-sad reference words...");
         List<String> newJoyWords = new ArrayList<>();
         List<String> newSadWords = new ArrayList<>();
+        // TODO sort the words in descending order by hits in google/bing (2 many requests not feasible)
         for (String word : referenceWords.getJoyWords()) {
             WordResult wordResult = restCaller.call(word);
             newJoyWords.addAll(wordResult.getStems());
@@ -156,82 +158,85 @@ public class GramaticalProximityAnalyzer implements Analyzer {
         System.out.println("Size after enlarging:\n" + referenceWords.toString());
     }
 
-    public EmotionResult analyze(String sentence) throws Exception{
+    public EmotionResult analyze(String sentence) {
 
         EmotionResult emotionResult = new EmotionResult();
+        try {
 //        String[] words = sentence.split("\\s+");
-        List<String> words = SyntaxAnalysisAPICaller.process(sentence);
+            List<String> words = SyntaxAnalysisAPICaller.process(sentence);
 
-        for (String word : words) {
-            word = spellChecker.correct(word);
-            double joyScoreResult, surprisedScoreResult, trustScore, loveScore, confidentScore, calmScore;
+            for (String word : words) {
+                word = spellChecker.correct(word);
+                double joyScoreResult, surprisedScoreResult, trustScore, loveScore, confidentScore, calmScore;
 
-            System.out.println("Going to make a call for " + word);
-            double onlyWord = apiCaller.search(word);
+                System.out.println("Going to make a call for " + word);
+                double onlyWord = apiCaller.search(word);
 
-            System.out.println("Setting up joy score...");
-            // ~40 requests
-            joyScoreResult = executeQueries(word, referenceWords.getJoyWords(), referenceWords.getSadnessWords(), onlyWord);
-            System.out.println("Joy score result:" + joyScoreResult);
-            emotionResult.addJoyScore(joyScoreResult);
+                System.out.println("Setting up joy score...");
+                // ~40 requests
+                joyScoreResult = executeQueries(word, referenceWords.getJoyWords(), referenceWords.getSadnessWords(), onlyWord);
+                System.out.println("Joy score result:" + joyScoreResult);
+                emotionResult.addJoyScore(joyScoreResult);
 
-            System.out.println("Setting up surprised score...");
-            surprisedScoreResult = executeQueries(word, referenceWords.getSurprisedWords(), referenceWords.getAnticipationWords(), onlyWord);
-            System.out.println("Surprised score result:" + surprisedScoreResult);
-            emotionResult.addSurprisedScore(surprisedScoreResult);
+                System.out.println("Setting up surprised score...");
+                surprisedScoreResult = executeQueries(word, referenceWords.getSurprisedWords(), referenceWords.getAnticipationWords(), onlyWord);
+                System.out.println("Surprised score result:" + surprisedScoreResult);
+                emotionResult.addSurprisedScore(surprisedScoreResult);
 
-            System.out.println("Setting up trust score...");
-            trustScore = executeQueries(word, referenceWords.getTrustWords(), referenceWords.getDoubtWords(), onlyWord);
-            System.out.println("Trust score result:" + trustScore);
-            emotionResult.addTrustScore(trustScore);
+                System.out.println("Setting up trust score...");
+                trustScore = executeQueries(word, referenceWords.getTrustWords(), referenceWords.getDoubtWords(), onlyWord);
+                System.out.println("Trust score result:" + trustScore);
+                emotionResult.addTrustScore(trustScore);
 
-            System.out.println("Setting up love score...");
-            loveScore = executeQueries(word, referenceWords.getLoveWords(), referenceWords.getHateWords(), onlyWord);
-            System.out.println("Love score result:" + loveScore);
-            emotionResult.addLoveScore(loveScore);
+                System.out.println("Setting up love score...");
+                loveScore = executeQueries(word, referenceWords.getLoveWords(), referenceWords.getHateWords(), onlyWord);
+                System.out.println("Love score result:" + loveScore);
+                emotionResult.addLoveScore(loveScore);
 
-            System.out.println("Setting up confident score...");
-            confidentScore = executeQueries(word, referenceWords.getConfidentWords(), referenceWords.getFearWords(), onlyWord);
-            System.out.println("Confident score result:" + confidentScore);
-            emotionResult.addConfidenceScore(confidentScore);
+                System.out.println("Setting up confident score...");
+                confidentScore = executeQueries(word, referenceWords.getConfidentWords(), referenceWords.getFearWords(), onlyWord);
+                System.out.println("Confident score result:" + confidentScore);
+                emotionResult.addConfidenceScore(confidentScore);
 
-            System.out.println("Setting up calm score...");
-            calmScore = executeQueries(word, referenceWords.getCalmWords(), referenceWords.getAngryWords(), onlyWord);
-            System.out.println("Calm score result:" + calmScore);
-            emotionResult.addCalmScore(calmScore);
+                System.out.println("Setting up calm score...");
+                calmScore = executeQueries(word, referenceWords.getCalmWords(), referenceWords.getAngryWords(), onlyWord);
+                System.out.println("Calm score result:" + calmScore);
+                emotionResult.addCalmScore(calmScore);
 
-            System.out.println("Total requests sent:" + totalQueries);
+                System.out.println("Total requests sent:" + totalQueries);
+            }
+        } catch (Exception e) {
+            // swallow e
+            System.out.println("Exception from syntax analyzer" + e.getMessage());
         }
 
         return emotionResult;
     }
 
     private double executeQueries(String word, Set<String> positiveClass, Set<String> negativeClass, double onlyWord) {
-        double positiveScore = 0.0d;
-        double negativeScore = 0.0d;
+        double score = 1.0d;
 
         List<List<String>> positiveXiWords = distributeWordsRandomlyIntoLists(new ArrayList<>(positiveClass), 9);
         List<List<String>> negativeXiWords = distributeWordsRandomlyIntoLists(new ArrayList<>(negativeClass), 9);
 
         // should make 2 * 10 requests
-        for (List<String> list : positiveXiWords) {
-            String[] arr = list.toArray(new String[0]);
-            double wordAndPxi = apiCaller.search(word, arr);
-            double onlyPxi = apiCaller.search(arr);
-            totalQueries += 2;
-            positiveScore += Math.log(1.0 + wordAndPxi / (onlyPxi * onlyWord));
+        for (int i = 0; i < positiveXiWords.size() && i < negativeXiWords.size(); i++) {
+            String[] positiveArray = positiveXiWords.get(i).toArray(new String[0]);
+            String[] negativeArray = negativeXiWords.get(i).toArray(new String[0]);
+            double wordAndPxi = apiCaller.search(word, positiveArray) / ALL_DOCS;
+            double onlyPxi = apiCaller.search(positiveArray) / ALL_DOCS;
+
+            double wordAndNxi = apiCaller.search(word, negativeArray) / ALL_DOCS;
+            double onlyNxi = apiCaller.search(negativeArray) / ALL_DOCS;
+
+            score *= (wordAndPxi * onlyNxi) / (onlyPxi * wordAndNxi);
+
+            totalQueries += 4;
+            //positiveScore += Math.log(1.0 + wordAndPxi / (onlyPxi * onlyWord));
         }
 
-        // 2 * 10 requests
-        for (List<String> list : negativeXiWords) {
-            String[] arr = list.toArray(new String[0]);
-            double wordAndNxi = apiCaller.search(word, arr);
-            double onlyNxi = apiCaller.search(arr);
-            totalQueries += 2;
-            negativeScore += Math.log(1.0 + (wordAndNxi / (onlyNxi * onlyWord)));
-        }
-
-        return positiveScore - negativeScore;
+        double res = Math.log(score) / Math.log(2.0);
+        return res;
     }
 
     private List<List<String>> distributeWordsRandomlyIntoLists(List<String> words, int size) {

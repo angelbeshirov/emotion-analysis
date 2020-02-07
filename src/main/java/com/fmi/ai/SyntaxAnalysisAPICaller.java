@@ -23,12 +23,12 @@ public class SyntaxAnalysisAPICaller {
         HttpEntity<String> entity = new HttpEntity<String>(sentence, headers);
         String answer = restTemplate.postForObject(API_URL, entity, String.class);
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        //objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper.readValue(answer, SyntaxResponse.class);
     }
 
     public static List<String> process(String sentence) throws Exception {
-        List<String> allWords = new ArrayList<String>();
+        List<String> allWords = new ArrayList<>();
         SyntaxResponse resp = SyntaxAnalysisAPICaller.analyze(sentence);
         for(Sentence s : resp.getSentences()) {
             allWords = Stream.concat(allWords.stream(),

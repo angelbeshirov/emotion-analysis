@@ -206,18 +206,18 @@ public class ReferenceWords {
     }
 
     private void initialReferenceWords() {
-        String[] initialJoyWords = {"joy", "delight", "pleasure", "exultation", "glad", "elation", "happy", "thrill", "exultation", "euphoria"};
-        String[] initialSadWords = {"sad", "unhappy", "sorrow", "regret", "depressed", "miserable", "dismal", "gloomy", "regret", "downcast"};
-        String[] initialSurprisedWords = {"surprised", "shocked", "astonish", "amaze", "speechless", "astounding", "stun", "breathtaking", "staggered", "wonder"};
-        String[] initialAnticipationWords = {"anticipate", "await", "expect", "hope", "foresee", "predict", "count on", "look for", "await", "prepare for"};
-        String[] initialTrustWords = {"trust", "faith", "certainty", "certitude", "assure", "sureness"};
-        String[] initialDoubtWords = {"doubt", "mistrust", "disbelief", "distrust", "uncertainty", "incredulity", "unbelief", "doubtful"};
-        String[] initialLoveWords = {"affection", "attachment", " devotedness", "devotion", "fondness", "passion", "crush", "intimacy", "love", "attachment"};
-        String[] initialHateWords = {"hate", "hatred", "loathe", "detest", "dislike", "despise", "disrelish", "abominate", "despise", "animosity"};
-        String[] initialConfidentWords = {"confident", "assured", " bold", "convinced", "courageous", "fearless", "hopeful", "positive"};
-        String[] initialFearWords = {"fear", "angst", "anxiety", "despair", "dismay", "worry", "horror", "panic", "scare", "unease"};
-        String[] initialCalmWords = {"calm", "calmness", " patience", "peace", "eased", "quiet", "restraint", "silence", "tranquility", "stillness"};
-        String[] initialAngryWords = {"angry", "annoyed", "bitter", "enraged", "exasperated", "furious", "heated", "irritated", "outraged", "resentful"};
+        String[] initialJoyWords = {"joy", "delight", "pleasure", "exultation", "glad", "elation", "happy", "thrill", "euphoria"};
+        String[] initialSadWords = {"sad", "unhappy", "sorrow", "sorry", "depressed", "miserable", "dismal", "gloomy", "regret"};
+        String[] initialSurprisedWords = {"surprised", "shocked", "astonish", "amaze", "speechless", "astounding", "stun", "breathtaking", "wonder"};
+        String[] initialAnticipationWords = {"anticipate", "expect", "hope", "foresee", "predict", "predictable", "expectation", "await"};
+        String[] initialTrustWords = {"trust", "faith", "certainty", "certitude", "assure", "sureness", "confident", "belief", "credence"};
+        String[] initialDoubtWords = {"doubt", "mistrust", "disbelief", "distrust", "uncertainty", "incredulity", "unbelief", "doubtful", "hesitate"};
+        String[] initialLoveWords = {"affection", "like", "devotion", "fond", "passion", "crush", "friend", "love", "attachment"};
+        String[] initialHateWords = {"hate", "hatred", "loathe", "detest", "dislike", "execrate", "disrelish", "abominate", "despise"};
+        String[] initialConfidentWords = {"confident", "assured", " bold", "convinced", "courageous", "fearless", "hopeful", "positive", "serene"};
+        String[] initialFearWords = {"fear", "anxiety", "despair", "dismay", "worry", "horror", "panic", "scare", "unease"};
+        String[] initialCalmWords = {"calm", " patience", "peace", "eased", "quiet", "restraint", "silence", "tranquility", "stillness"};
+        String[] initialAngryWords = {"angry", "annoyed", "bitter", "enraged", "furious", "heated", "irritated", "outraged", "resentful"};
 
         addJoyWord(initialJoyWords);
         addSadWord(initialSadWords);

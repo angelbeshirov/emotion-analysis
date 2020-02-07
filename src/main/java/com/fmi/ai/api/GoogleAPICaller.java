@@ -1,10 +1,7 @@
 package com.fmi.ai.api;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -23,7 +20,7 @@ public class GoogleAPICaller implements APICaller {
     private static final String URL = "https://www.googleapis.com/customsearch/v1?key={0}&cx=013698310139606318238%3As2cmwdqrvyq&q={1}&fbclid=IwAR3ZhJX3gGUhay5P1kovZp7w1f2bfhn10iDY1Wt9N8oK6gsYKHpY1xoLBn4";
     private static final String[] KEYS = new String[]{"AIzaSyBIq1R9Au_dTPj80CFMm8xsJjfthsD_O20",
             "AIzaSyAwlZtdYoCFfUIDZaHQHd1FJZqAUol4Udo",
-            "AIzaSyBIq1R9Au_dTPj80CFMm8xsJjfthsD_O20",
+            "AIzaSyCr_WhtO60uTlNqchNMMhb5CouU1G5pfOI",
             "AIzaSyCexNB0A08GkPqbl40ceRUSz8X1jnd5dTw"};
 
     public double search(String word, String[] dictionaryWords) {
@@ -46,7 +43,7 @@ public class GoogleAPICaller implements APICaller {
 
         String searchQuery = URLEncoder.encode(sb.toString(), StandardCharsets.UTF_8);
 
-        String builtUrl = MessageFormat.format(URL, KEYS[1], searchQuery);
+        String builtUrl = MessageFormat.format(URL, KEYS[2], searchQuery);
 
         try {
             URL url = new URL(builtUrl);
@@ -78,7 +75,7 @@ public class GoogleAPICaller implements APICaller {
 
         String searchQuery = URLEncoder.encode(sb.toString(), StandardCharsets.UTF_8);
 
-        String builtUrl = MessageFormat.format(URL, KEYS[1], searchQuery);
+        String builtUrl = MessageFormat.format(URL, KEYS[2], searchQuery);
 
         try {
             URL url = new URL(builtUrl);
@@ -94,7 +91,7 @@ public class GoogleAPICaller implements APICaller {
     }
 
     public double search(String word) {
-        String builtUrl = MessageFormat.format(URL, KEYS[1], word);
+        String builtUrl = MessageFormat.format(URL, KEYS[2], word);
         try {
             URL url = new URL(builtUrl);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();

@@ -1,10 +1,7 @@
 package com.fmi.ai;
 
 import com.fmi.ai.analyze.Analyzer;
-import com.fmi.ai.analyze.GramaticalProximityAnalyzer;
 import com.fmi.ai.analyze.Result;
-import com.fmi.ai.api.APICaller;
-import com.fmi.ai.api.GoogleAPICaller;
 import com.fmi.ai.lexicon.LexiconAnalyzer;
 
 import java.util.Scanner;
@@ -26,18 +23,16 @@ public class Runner {
 
 
             // api calls
-            APICaller apiCaller = new GoogleAPICaller(); // change here to bing/google
-            Analyzer analyzer = new GramaticalProximityAnalyzer(apiCaller);
-            System.out.println("Please enter a sentence to analyze for bing/google analyzer:");
-            input = sc.nextLine();
-            emotionResult = analyzer.analyze(input);
-            System.out.println(emotionResult.toString());
+//            APICaller apiCaller = new BingAPICaller(); // change here to bing/google
+//            Analyzer analyzer = new GramaticalProximityAnalyzer(apiCaller);
+//            System.out.println("Please enter a sentence to analyze for bing/google analyzer:");
+//            String input = sc.nextLine();
+//            Result emotionResult = analyzer.analyze(input);
+//            System.out.println(emotionResult.toString());
 
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
-
     }
 }

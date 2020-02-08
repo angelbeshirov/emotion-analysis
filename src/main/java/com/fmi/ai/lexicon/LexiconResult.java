@@ -13,6 +13,7 @@ public class LexiconResult implements Result {
     private double annoyed;
     private double happy;
     private double inspired;
+    private double sad;
 
     public LexiconResult() {
     }
@@ -41,6 +42,10 @@ public class LexiconResult implements Result {
         return inspired;
     }
 
+    public double getSad() {
+        return sad;
+    }
+
     public void setAfraid(double afraid) {
         this.afraid = afraid;
     }
@@ -63,6 +68,10 @@ public class LexiconResult implements Result {
 
     public void setInspired(double inspired) {
         this.inspired = inspired;
+    }
+
+    public void setSad(double sad) {
+        this.sad = sad;
     }
 
     public void addToAfraid(double x) {
@@ -89,16 +98,23 @@ public class LexiconResult implements Result {
         inspired += x;
     }
 
+    public void addToSad(double x) {
+        sad += x;
+    }
+
 
     @Override
     public String toString() {
+        double sum = Math.sqrt(afraid * afraid + amused * amused + angry * angry + annoyed * annoyed + happy * happy + inspired * inspired + sad * sad);
+
         return "LexiconResult{" +
-                "afraid=" + afraid +
-                ", amused=" + amused +
-                ", angry=" + angry +
-                ", annoyed=" + annoyed +
-                ", happy=" + happy +
-                ", inspired=" + inspired +
+                "afraid=" + afraid / sum +
+                ", amused=" + amused / sum +
+                ", angry=" + angry / sum +
+                ", annoyed=" + annoyed / sum +
+                ", happy=" + happy / sum +
+                ", inspired=" + inspired / sum +
+                ", sad=" + sad / sum +
                 '}';
     }
 }

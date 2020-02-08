@@ -41,6 +41,7 @@ public class LexiconAnalyzer implements Analyzer {
                     result.addToAnnoyed(entry.getAnnoyed());
                     result.addToHappy(entry.getHappy());
                     result.addToInspired(entry.getInspired());
+                    result.addToSad(entry.getSad());
                 }
             }
         } catch (Exception e) {

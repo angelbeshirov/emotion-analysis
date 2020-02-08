@@ -162,8 +162,8 @@ public class GramaticalProximityAnalyzer implements Analyzer {
 
         EmotionResult emotionResult = new EmotionResult();
         try {
-//        String[] words = sentence.split("\\s+");
-            List<String> words = SyntaxAnalysisAPICaller.process(sentence);
+        String[] words = sentence.split("\\s+");
+//            List<String> words = SyntaxAnalysisAPICaller.process(sentence);
 
             for (String word : words) {
                 word = spellChecker.correct(word);

@@ -43,8 +43,9 @@ public class Lexicon {
                         Double.parseDouble(data[AMUSED_INDEX]),
                         Double.parseDouble(data[ANGRY_INDEX]),
                         Double.parseDouble(data[ANNOYED_INDEX]),
-                        Double.parseDouble(data[HAPPY_INDEX]) - Double.parseDouble(data[SAD_INDEX]),
+                        Double.parseDouble(data[HAPPY_INDEX]),
                         Double.parseDouble(data[INSPIRED_INDEX]),
+                        Double.parseDouble(data[SAD_INDEX]),
                         Double.parseDouble(data[FREQ_INDEX])
                 );
                 lexicon.put(data[WORD_INDEX], lexiconEntry);

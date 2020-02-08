@@ -12,17 +12,19 @@ public class LexiconEntry {
     private final double amused;
     private final double angry;
     private final double annoyed;
-    private final double happy; // happy - sad
+    private final double happy;
     private final double inspired;
+    private final double sad;
     private final double frequency;
 
-    public LexiconEntry(double afraid, double amused, double angry, double annoyed, double happy, double inspired, double frequency) {
+    public LexiconEntry(double afraid, double amused, double angry, double annoyed, double happy, double inspired, double sad, double frequency) {
         this.afraid = afraid;
         this.amused = amused;
         this.angry = angry;
         this.annoyed = annoyed;
         this.happy = happy;
         this.inspired = inspired;
+        this.sad = sad;
         this.frequency = frequency;
     }
 
@@ -48,6 +50,10 @@ public class LexiconEntry {
 
     public double getInspired() {
         return inspired;
+    }
+
+    public double getSad() {
+        return sad;
     }
 
     public double getFrequency() {

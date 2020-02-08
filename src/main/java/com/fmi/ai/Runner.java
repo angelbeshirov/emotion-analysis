@@ -1,7 +1,10 @@
 package com.fmi.ai;
 
 import com.fmi.ai.analyze.Analyzer;
+import com.fmi.ai.analyze.GramaticalProximityAnalyzer;
 import com.fmi.ai.analyze.Result;
+import com.fmi.ai.api.APICaller;
+import com.fmi.ai.api.BingAPICaller;
 import com.fmi.ai.lexicon.LexiconAnalyzer;
 
 import java.util.Scanner;
